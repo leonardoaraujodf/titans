@@ -1,0 +1,55 @@
+% Template for FPL 2012 papers; to be used with:
+%          spconf.sty   - ICASSP/ICIP LaTeX style file
+%          IEEEtran.bst - IEEE bibliography style file
+
+% Created:  Apr-May 2005 - Riku Uusikartano -- riku.uusikartano@tut.fi
+% Modified: March-2012 - Daniel Muñoz Arboleda -- damuz@unb.br
+% --------------------------------------------------------------------------
+
+\documentclass[10pt,a4paper]{article}
+
+\usepackage{spconf,amsmath,epsfig}
+\usepackage[brazilian]{babel} % Suporte para o Português
+\usepackage[latin1]{inputenc} % Suporte para acentuação sem necessidade dos comandos especiais.
+\usepackage[]{subfigure}
+\usepackage[portuguese,algoruled,longend]{algorithm2e}
+\usepackage{multirow}
+\usepackage{float}
+
+
+% Titulo do documento
+% -------------------
+\title{Projeto de um Robô Autônomo Seguidor de Ectoplasma}
+
+
+% Nome dos autores
+% ----------------
+\name{Leonardo Amorim de Araújo}
+\address{Programa de Graduação em Engenharia Eletrônica, Faculdade Gama\\
+Universidade de Brasília\\
+Gama, DF, Brasil\\
+email: leonardoaraujodf@gmail.com}
+
+
+\hyphenation{Tam-pe-re ela-bo-ra-cao}
+
+\begin{document}
+
+\maketitle
+
+\input{resumo}
+\input{introducao}
+\input{experimento}
+\input{resultados}
+\input{conclusoes}
+\input{Anexos}
+
+\small
+% IEEEtran is a LaTeX style file defining the reference formatting.
+% -----------------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\bibliography{IEEEabrv,labrefs}
+%\bibliography{IEEEabrv,fpl_refs}
+
+
+\end{document}

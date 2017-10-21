@@ -1,0 +1,78 @@
+\section{Experimento}
+
+Para mostrar que é possível realizar a proposta requerida, os sensores de ectoplasma foram simulados utilizando LDRs, que são compatíveis pois estes variam sua resistência elétrica conforme a incidência de luz. As saídas para acionamento dos motores esquerdo, direito e da arma de prótons, foram simuladas utilizados LEDS.
+
+\subsection{Fluxograma do Projeto}
+
+Como o projeto foi realizado com um microcontrolador, não é relevante usar máquina de estados pois as ações não são realizadas após pulsos de clock, e sim um fluxograma que apresenta as ações tomadas.
+
+\subsection{Conversão Analógico-Digital}
+
+A figura \ref{fig1} apresenta como foi realizada a conversão analógico-digital usando o MSP. No código apresentado na referência, as funções \textit{Setup\_ADC} e \textit{Read\_ADC()} tem o objetivo de realizar a configuração inicial do Conversor A/D e a leitura dos valores analógicos nos pinos P1.0, P1.1, P1.2 e P1.3, respectivamente. Os valores convertidos serão armazenados nas variáveis \textit{ADC[0]}, \textit{ADC[1]}, \textit{ADC[2]} e \textit{ADC[3]}. Posteriormente, na função \textit{Ler\_Sensores()}, os valores destas variáveis serão atualizadas para que os dados obtidos de tensão sejam tratados, de forma que serão atribuídos os valores lidos às variáveis:
+ 
+\begin{itemize}
+	\item \textit{SENSOR\_FRONTAL = ADC[3]}
+	\item \textit{SENSOR\_TRASEIRO = ADC[2]}
+	\item \textit{SENSOR\_ESQUERDO = ADC[1]}
+	\item \textit{SENSOR\_DIREITO = ADC[0]}
+\end{itemize}
+
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=0.25]{Figura1.jpg}
+	%\includegraphics[scale=0.9]{figures/fig1_RNG.eps}
+	\caption{Fluxograma mostrando como foi realizado a conversão analógico-digital}
+	\label{fig1}
+\end{figure}
+
+\subsection{Ações a serem realizadas após a conversão}
+
+A figura \ref{fig2} apresenta o fluxograma das ações tomadas pelo microcontrolador após a conversão analógico-digital ser realizada. Na função \textit{Ler\_Sensores()}, todas estas ações são realizadas. É importante destacar que as saídas estão declaradas nas seguintes portas do microcontrolador:
+
+\begin{itemize}
+	\item P1.4 - MOTOR ESQUERDO
+	\item P1.5 - MOTOR DIREITO
+	\item P1.6 - ARMA
+\end{itemize}
+
+onde o valor lógico 1 representa acionamento e valor lógico 0, desligamento. A função \textit{Ler\_Sensores()} segue o seguinte procedimento:
+
+\begin{itemize}
+	\item Caso a média dos valores dos sensores lidos seja menor que 20, ou seja, menor que 20*3 mV = 60 mV, isto quer dizer que a queda de tensão nos LDRs foi grande, significando que a incidência de luz está alta sobre os sensores, e em todos ao mesmo tempo. Desta forma, é possível que um fantasma esteja muito próximo do robô e deve-se atacar. Chama-se a função \textit{Selecao\_Saida()} que seleciona qual saída será acionada. Nesta hora, o robô parará, a arma será acionada, será esperado 1 segundo para o disparo, e mais 9 segundos para que a arma de prótons possa estabilizar, conforme requerido pela proposta de projeto. Após isto, será realizado mais uma leitura dos sensores, e será verificado se ainda há existência do fantasma, realizando o mesmo procedimento em loop descrito.
+	\item Caso o valor do sensor frontal seja maior que a média dos valores dos sensores lidos mais um parâmetro de média, que é definido pelo projetista (por exemplo, existem ectoplasmas que são difíceis de se detectar, então o parâmetro de média deve ser baixo, já para outros fantasmas, aumenta-se o valor desta constante) o robô deve seguir em frente, pois o sensor frontal detecta ectoplasma à certa distância.
+	\item Caso o valor do sensor esquerdo seja maior que a média dos valores dos sensores lidos mais o parâmetro de média, o robô deve virar a esquerda, desligando o motor da direita.
+	\item Caso o valor dos sensores direito ou traseiro sejam maiores que média dos valores lidos mais o parâmetro de média, o robô deve virar à direita, desligando o motor da esquerda. Veja que, quando o sensor traseiro estiver acionado, já que o robô não pode mover para trás, é necessário que este gire 180º, virando à direita totalmente, e assim o sensor frontal será acionado, e desta forma, este seguirá em frente. Neste ponto, pode existir uma falha, pois o fantasma se for rápido, pode enganar o robô, devendo-se posteriormente criar uma arma que seja utilizada com servo-motores, por exemplo.
+	\item Se nenhum sensor for acionado, ou seja, não existir presença de ectoplasma, o robô irá seguir reto. Os projetistas podem posteriormente mudar esta condição.
+\end{itemize}
+
+	Em cada caso, após o acionamento dos motores, espera-se 100 ms para se realizar uma nova conversão. Isto é interessante para estabilidade do motor, pois ele pode começar a tremer muito, caso os valores mudem com rapidez (no caso do acionamento da arma, espera-se 10 segundos, utilizado a função \textit{Atraso()} que utiliza o TimerA do MSP430).
+	
+\begin{figure}[htbp]
+	\centering
+	\includegraphics[scale=0.25]{Figura2.jpg}
+	%\includegraphics[scale=0.9]{figures/fig1_RNG.eps}
+	\caption{Fluxograma mostrando as ações tomadas após a conversão}
+	\label{fig2}
+\end{figure}
+
+\subsection{Material Utilizado}
+
+A tabela \ref{Materiais_utilizados} apresenta todos os dispositivos e componentes utilizados no projeto.
+
+\begin{table}[!h]\centering
+	\caption{Materiais Utilizados no Experimento}
+	\label{Materiais_utilizados}
+	\begin{tabular}{c p{5 cm}}\centering
+		Quantidade & Material \\
+		\hline
+		4 & Resistores de de $10,00 \pm 0,50$ k$\Omega $ (1/4 W)\\
+		3 & Resistores de $1,00 \pm 0,05$ k$\Omega $ (1/4 W) \\ 
+		4 & Resistores Dependentes de Luz - LDRs \\
+		1 & Mini-Protoboard\\
+		3 & LEDs\\			
+		1 & Microcontrolador MSP 430 modelo G2553 \\
+
+		\hline				
+	\end{tabular}
+\end{table}
+
